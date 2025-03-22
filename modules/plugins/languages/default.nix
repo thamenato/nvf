@@ -18,6 +18,7 @@ in {
     ./html.nix
     ./haskell.nix
     ./java.nix
+    ./just.nix
     ./lua.nix
     ./markdown.nix
     ./nim.nix
