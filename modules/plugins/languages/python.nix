@@ -9,7 +9,7 @@
   inherit (lib.meta) getExe;
   inherit (lib.modules) mkIf mkMerge;
   inherit (lib.lists) isList;
-  inherit (lib.types) enum either listOf package str bool;
+  inherit (lib.types) enum either listOf package str bool nullOr;
   inherit (lib.nvim.lua) expToLua;
 
   cfg = config.vim.languages.python;
@@ -41,6 +41,11 @@
           if isList cfg.lsp.package
           then expToLua cfg.lsp.package
           else ''{"${cfg.lsp.package}/bin/basedpyright-langserver", "--stdio"}''
+        },
+          ${
+          if cfg.lsp.settings == null
+          then ""
+          else ''settings = ${cfg.lsp.settings},''
         }
         }
       '';
@@ -182,6 +187,13 @@ in {
         example = ''[lib.getExe pkgs.jdt-language-server "-data" "~/.cache/jdtls/workspace"]'';
         type = either package (listOf str);
         default = servers.${cfg.lsp.server}.package;
+      };
+
+      settings = mkOption {
+        description = "python LSP settings definition";
+        example = literalExpression ''{ something = {} }'';
+        default = null;
+        type = nullOr str;
       };
     };
 
